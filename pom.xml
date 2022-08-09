@@ -2,14 +2,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>io.github.baedorf.tailoringexpert</groupId>
+    <groupId>eu.tailoringexpert</groupId>
     <artifactId>tailoringexpert-dependencies</artifactId>
     <packaging>pom</packaging>
     <version>0.0.2-SNAPSHOT</version>
 
     <name>${project.groupId}:${project.artifactId}</name>
     <description>Management der verwendeten Libraries der TailoringExpert Plattform</description>
-    <url>https://github.com/tailoringexpert/tailoringexpert-dependencies</url>
+    <url>https://github.com/tailoringexpert/dependencies</url>
 
     <developers>
         <developer>
@@ -307,7 +307,7 @@
                 <executions>
                     <execution>
                         <id>sign-artifacts</id>
-                        <phase>verify</phase>
+                        <phase>deploy</phase>
                         <goals>
                             <goal>sign</goal>
                         </goals>
