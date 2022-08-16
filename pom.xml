@@ -64,7 +64,7 @@
         <poi.version>5.2.2</poi.version>
 
         <springboot.version>2.7.2</springboot.version>
-        <springdoc-openapi.version>1.6.9</springdoc-openapi.version>
+        <springdoc-openapi.version>1.6.10</springdoc-openapi.version>
 
         <!-- tailoring-bom -->
         <ejml.version>0.41</ejml.version>
