@@ -63,7 +63,7 @@
         <openhtmltopdf.version>1.0.10</openhtmltopdf.version>
         <poi.version>5.2.2</poi.version>
 
-        <springboot.version>2.7.2</springboot.version>
+        <springboot.version>2.7.3</springboot.version>
         <springdoc-openapi.version>1.6.9</springdoc-openapi.version>
 
         <!-- tailoring-bom -->
