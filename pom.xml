@@ -64,6 +64,7 @@
         <poi.version>5.2.2</poi.version>
 
         <springboot.version>2.7.2</springboot.version>
+        <spring-cloud.version>3.1.4</spring-cloud.version>
         <springdoc-openapi.version>1.6.9</springdoc-openapi.version>
 
         <!-- tailoring-bom -->
@@ -168,6 +169,11 @@
                         <artifactId>spring-boot-starter-logging</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-starter-config</artifactId>
+                <version>${spring-cloud.version}</version>
             </dependency>
 
 
