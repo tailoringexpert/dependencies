@@ -2,7 +2,7 @@ version: 2
 updates:
   - package-ecosystem: "maven" 
     directory: "/" 
-    target-branch: "main"
+    target-branch: "develop"
     schedule:
       interval: "daily"
   - package-ecosystem: "github-actions"
