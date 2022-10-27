@@ -69,7 +69,7 @@
 
         <!-- tailoring-bom -->
         <ejml.version>0.41</ejml.version>
-        <pdfbox.version>2.0.26</pdfbox.version>
+        <pdfbox.version>2.0.27</pdfbox.version>
 
         <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
         <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
