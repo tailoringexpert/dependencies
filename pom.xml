@@ -5,7 +5,7 @@
     <groupId>eu.tailoringexpert</groupId>
     <artifactId>tailoringexpert-dependencies</artifactId>
     <packaging>pom</packaging>
-    <version>0.0.4-SNAPSHOT</version>
+    <version>0.0.4</version>
 
     <name>${project.groupId}:${project.artifactId}</name>
     <description>Management der verwendeten Libraries der TailoringExpert Plattform</description>
@@ -29,7 +29,7 @@
         <connection>scm:git:https://github.com/tailoringexpert/dependencies.git</connection>
         <developerConnection>scm:git:https://github.com/tailoringexpert/dependencies.git</developerConnection>
         <url>https://github.com/tailoringexpert/dependencies.git</url>
-		<tag>HEAD</tag>
+		<tag>v0.0.4</tag>
   </scm>
 
     <distributionManagement>
