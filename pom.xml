@@ -68,7 +68,7 @@
         <springdoc-openapi.version>1.7.0</springdoc-openapi.version>
 
         <!-- tailoring-bom -->
-        <ejml.version>0.42</ejml.version>
+        <ejml.version>0.43</ejml.version>
         <pdfbox.version>2.0.28</pdfbox.version>
 
         <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
