@@ -1,4 +1,4 @@
 # tailoringexpert-dependencies
 
-Management der Abhängigkeiten der TailoringExpert Plattform.
-Alle Module und Mandantenimplementierungen sollten diese benutzen.
+Management of TailoringExpert platform dependencies.
+All modules and tenants must use this BOM.

@@ -43,30 +43,29 @@ under the License.
  | values (values used when the setting is not specified) are provided.
  |
  |-->
-<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" 
-          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
 
-  <servers>
-  	<server>
-		<id>ossrh</id>
-		<username>${OSSRH_USERNAME}</username>
-		<password>${OSSRH_PASSWORD}</password>     
-	</server>
-  </servers>
+    <servers>
+        <server>
+            <id>ossrh</id>
+            <username>${OSSRH_USERNAME}</username>
+            <password>${OSSRH_PASSWORD}</password>
+        </server>
+    </servers>
 
-  <profiles>
-    <profile>
-		<id>ossrh</id>
-		<properties>
-            <gpg.homedir>${GPG_HOMEDIR}</gpg.homedir>
-			<gpg.keyname>${OSSRH_GPG_KEYNAME}</gpg.keyname>
-            <gpg.passphrase>${OSSRH_GPG_PASSPHRASE}</gpg.passphrase>
-		</properties>
-	</profile>
-  </profiles>
+    <profiles>
+        <profile>
+            <id>ossrh</id>
+            <properties>
+                <gpg.keyname>${OSSRH_GPG_KEYNAME}</gpg.keyname>
+                <gpg.passphrase>${OSSRH_GPG_PASSPHRASE}</gpg.passphrase>
+            </properties>
+        </profile>
+    </profiles>
 
-  <activeProfiles>
-    <activeProfile>ossrh</activeProfile>
-  </activeProfiles>
+    <activeProfiles>
+        <activeProfile>ossrh</activeProfile>
+    </activeProfiles>
 </settings>
