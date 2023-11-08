@@ -4,14 +4,19 @@
           xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
 
     <localRepository>/home/.m2</localRepository>
-    
+
     <servers>
+        <server>
+            <id>ossrh</id>
+            <username>${OSSRH_CREDENTIALS_USR}</username>
+            <password>${OSSRH_CREDENTIALS_PSW}</password>
+        </server>
         <server>
             <id>tailoringexpert-releases</id>
             <username>${NEXUS_CREDENTIALS_USR}</username>
             <password>${NEXUS_CREDENTIALS_PSW}</password>
         </server>
-		<server>
+        <server>
             <id>tailoringexpert-snapshots</id>
             <username>${NEXUS_CREDENTIALS_USR}</username>
             <password>${NEXUS_CREDENTIALS_PSW}</password>
@@ -20,13 +25,25 @@
 
     <profiles>
         <profile>
+            <id>ossrh</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <gpg.keyname>${OSSRH_GPG_USR}</gpg.keyname>
+                <gpg.passphrase>${OSSRH_GPG_PSW}</gpg.passphrase>
+                <!-- deprecated -->
+                <!--gpg.homedir>${GPG_HOMEDIR}</gpg.homedir-->
+            </properties>
+        </profile>
+        <profile>
             <id>nexus</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
                 <tailoringexpert-releases.repository>${NEXUS_RELEASEURL}</tailoringexpert-releases.repository>
-				<tailoringexpert-snapshots.repository>${NEXUS_SNAPSHOTURL}</tailoringexpert-snapshots.repository>
+                <tailoringexpert-snapshots.repository>${NEXUS_SNAPSHOTURL}</tailoringexpert-snapshots.repository>
             </properties>
         </profile>
         <profile>
