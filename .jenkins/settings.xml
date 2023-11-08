@@ -32,8 +32,6 @@
             <properties>
                 <gpg.keyname>${OSSRH_GPG_USR}</gpg.keyname>
                 <gpg.passphrase>${OSSRH_GPG_PSW}</gpg.passphrase>
-                <!-- deprecated -->
-                <!--gpg.homedir>${GPG_HOMEDIR}</gpg.homedir-->
             </properties>
         </profile>
         <profile>
