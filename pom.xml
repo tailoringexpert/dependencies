@@ -71,7 +71,7 @@
 
         <!-- tailoring-bom -->
         <ejml.version>0.43.1</ejml.version>
-        <pdfbox.version>3.0.1</pdfbox.version>
+        <pdfbox.version>3.0.2</pdfbox.version>
 
         <gitflow-maven-plugin.version>1.21.0</gitflow-maven-plugin.version>
         <maven-gpg-plugin.version>3.2.4</maven-gpg-plugin.version>
