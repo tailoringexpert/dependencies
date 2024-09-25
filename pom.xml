@@ -74,7 +74,7 @@
         <pdfbox.version>3.0.3</pdfbox.version>
 
         <gitflow-maven-plugin.version>1.21.0</gitflow-maven-plugin.version>
-        <maven-gpg-plugin.version>3.2.5</maven-gpg-plugin.version>
+        <maven-gpg-plugin.version>3.2.6</maven-gpg-plugin.version>
         <nexus-staging-maven-plugin.version>1.7.0</nexus-staging-maven-plugin.version>
     </properties>
 
