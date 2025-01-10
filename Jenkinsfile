@@ -3,7 +3,7 @@ properties([
         booleanParam(
             name: 'RELEASE_BUILD',
             defaultValue: false),
-		booleanParam(
+        booleanParam(
             name: 'DEPLOY',
             defaultValue: false),
         gitParameter(
@@ -21,11 +21,11 @@ pipeline {
 
     environment {
         GIT_CREDENTIALS_ID = 'TAILORINGEXPERT_GITHUB_CREDENTIALS'
-		GIT_CREDENTIALS = credentials('TAILORINGEXPERT_GITHUB_CREDENTIALS')
-		GPG_SIGNKEY = credentials('GITHUB_GPG_SIGNKEY')
+        GIT_CREDENTIALS = credentials('TAILORINGEXPERT_GITHUB_CREDENTIALS')
+        GPG_SIGNKEY = credentials('GITHUB_GPG_SIGNKEY')
         OSSRH_CREDENTIALS = credentials('OSSRH_CREDENTIALS')
         OSSRH_GPG = credentials('OSSRH_GPG')
-		GIT_REPOSITORY = 'tailoringexpert/dependencies.git'	
+        GIT_REPOSITORY = 'tailoringexpert/dependencies.git' 
          
         // other (external) defined env vars
         // M2_VOLUME maven      repoository volume
@@ -37,10 +37,11 @@ pipeline {
 
  agent {
         docker {
-            image 'tailoringexpert/maven:3.9-eclipse-temurin-17-alpine'
+            image 'tailoringexpert/maven:3.9-eclipse-23'
             args '''
-				-u 1001
+                -u 1001
                 -v $GPG_VOLUME:/.gnupg\
+                -v $SONAR_USER_HOME:/.sonar \
                 -v $PWD:/data \
                 -v $M2_VOLUME:/home/maven \
                 -e GIT_CREDENTIALS=$GIT_CREDENTIALS \
@@ -70,54 +71,54 @@ pipeline {
                 }
                 sh "echo checking out ${checkoutBranch}"             
              
-				cleanWs()
+                cleanWs()
                 git branch: "${checkoutBranch}", url: env.GIT_URL, credentialsId: GIT_CREDENTIALS_ID
              }
         }
 
         stage('install') {
-			steps {
-				sh "mvn --settings .jenkins/settings.xml -Dmaven.repo.local=${M2_VOLUME}/repository -DskipTests install"
-			}
+            steps {
+                sh "mvn --settings .jenkins/settings.xml -Dmaven.repo.local=${M2_VOLUME}/repository -DskipTests clean install"
+            }
         }
 
-		stage('release') {
+        stage('release') {
             when {
                 expression { params.RELEASE_BUILD }
             }
 
-			steps {
-				// prepare git signing
-				sh('git remote set-url origin https://$GIT_CREDENTIALS@github.com/$GIT_REPOSITORY')
+            steps {
+                // prepare git signing
+                sh('git remote set-url origin https://$GIT_CREDENTIALS@github.com/$GIT_REPOSITORY')
                 sh('git config user.name "$GIT_COMMITTER_NAME"')
-				sh('git config user.email $GIT_COMMITTER_EMAIL')
-				sh('git config commit.gpgsign true')
-				sh('git config user.signingkey $GPG_SIGNKEY')
-				
-				sh "mvn --settings .jenkins/settings.xml -Dmaven.repo.local=${M2_VOLUME}/repository -B -Dresume=false -DargLine='-DprocessAllModules --settings .jenkins/settings.xml -Dmaven.repo.local=${M2_VOLUME}/repository' -DskipTestProject=true  -DgpgSignTag=true -DgpgSignCommit=true -DpostReleaseGoals=deploy gitflow:release"
+                sh('git config user.email $GIT_COMMITTER_EMAIL')
+                sh('git config commit.gpgsign true')
+                sh('git config user.signingkey $GPG_SIGNKEY')
+                
+                sh "mvn --settings .jenkins/settings.xml -Dmaven.repo.local=${M2_VOLUME}/repository -B -Dresume=false -DargLine='-DprocessAllModules -Dmaven.repo.local=${M2_VOLUME}/repository' -DskipTestProject=true  -DgpgSignTag=true -DgpgSignCommit=true -DpostReleaseGoals=deploy gitflow:release"
 
-				// remove credentials
-				sh('git remote set-url origin $GIT_URL')
-			}
-		}
+                // remove credentials
+                sh('git remote set-url origin $GIT_URL')
+            }
+        }
 
-		stage('deploy') {	
-			when {
-				anyOf {
-					expression { params.RELEASE_BUILD };
-					expression { params.DEPLOY }
-				}
-			}
-					
+        stage('deploy') {   
+            when {
+                anyOf {
+                    expression { params.RELEASE_BUILD };
+                    expression { params.DEPLOY }
+                }
+            }
+                    
             steps {
                 script {
-					if (params.DEPLOY) {
-						sh "mvn --settings .jenkins/settings.xml -Dmaven.repo.local=${M2_VOLUME}/repository -DskipTests deploy"
-					} else {
-						sh "exit 0"
-					}
-				}
-			}
-		}
+                    if (params.DEPLOY) {
+                        sh "mvn --settings .jenkins/settings.xml -Dmaven.repo.local=${M2_VOLUME}/repository -DskipTests deploy"
+                    } else {
+                        sh "exit 0"
+                    }
+                }
+            }
+        }
     }
 }
