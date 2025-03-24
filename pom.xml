@@ -70,7 +70,7 @@
         <springdoc-openapi.version>1.8.0</springdoc-openapi.version>
 
         <!-- tailoring-bom -->
-        <ejml.version>0.43.1</ejml.version>
+        <ejml.version>0.44.0</ejml.version>
         <pdfbox.version>3.0.4</pdfbox.version>
 
         <gitflow-maven-plugin.version>1.21.0</gitflow-maven-plugin.version>
