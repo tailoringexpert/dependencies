@@ -95,7 +95,7 @@ pipeline {
                 sh('git config commit.gpgsign true')
                 sh('git config user.signingkey $GPG_SIGNKEY')
                 
-                sh "mvn --settings .jenkins/settings.xml -Dmaven.repo.local=${M2_VOLUME}/repository -B -Dresume=false -DargLine='-DprocessAllModules -Dmaven.repo.local=${M2_VOLUME}/repository' -DskipTestProject=true  -DgpgSignTag=true -DgpgSignCommit=true -DpostReleaseGoals=deploy gitflow:release"
+                sh "mvn --settings .jenkins/settings.xml -Dmaven.repo.local=${M2_VOLUME}/repository -B -Dresume=false -DargLine='-DprocessAllModules  --settings .jenkins/settings.xml  -Dmaven.repo.local=${M2_VOLUME}/repository' -DskipTestProject=true  -DgpgSignTag=true -DgpgSignCommit=true -DpostReleaseGoals=deploy gitflow:release"
 
                 // remove credentials
                 sh('git remote set-url origin $GIT_URL')
