@@ -39,7 +39,7 @@ pipeline {
         docker {
             image 'tailoringexpert/maven:3.9-eclipse-23'
             args '''
-                -u 1001
+                -u 501:1000
                 -v $GPG_VOLUME:/.gnupg\
                 -v $SONAR_USER_HOME:/.sonar \
                 -v $PWD:/data \
