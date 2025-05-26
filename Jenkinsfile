@@ -39,8 +39,8 @@ pipeline {
         docker {
             image 'tailoringexpert/maven:3.9-eclipse-23'
             args '''
-                -u 501:1000
-                -v $GPG_VOLUME:/.gnupg\
+                -u 501 \
+				-v /home/containers/jenkins/.gnupg:/.gnupg \
                 -v $SONAR_USER_HOME:/.sonar \
                 -v $PWD:/data \
                 -v $M2_VOLUME:/home/maven \
@@ -52,7 +52,7 @@ pipeline {
                 -e NEXUS_CREDENTIALS_USR=$NEXUS_CREDENTIALS_USR \
                 -e NEXUS_CREDENTIALS_PSW=$NEXUS_CREDENTIALS_PSW \
                 -e GPG_SIGNKEY=$GPG_SIGNKEY \
-                -e SONAR_TOKEN=$SONAR_TOKEN
+                -e SONAR_TOKEN=$SONAR_TOKEN \
             '''
             reuseNode true
        }
@@ -113,7 +113,8 @@ pipeline {
             steps {
                 script {
                     if (params.DEPLOY) {
-                        sh "mvn --settings .jenkins/settings.xml -Dmaven.repo.local=${M2_VOLUME}/repository -DskipTests deploy"
+						//sh "mvn --settings .jenkins/settings.xml -Dmaven.repo.local=${M2_VOLUME}/repository -DskipTests exec:exec@ll"
+						sh "mvn --settings .jenkins/settings.xml -Dmaven.repo.local=${M2_VOLUME}/repository -DskipTests deploy"
                     } else {
                         sh "exit 0"
                     }
