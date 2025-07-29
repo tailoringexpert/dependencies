@@ -39,8 +39,8 @@ pipeline {
         docker {
             image 'tailoringexpert/maven:3.9-eclipse-23'
             args '''
-                -u 501 \
-				-v /home/containers/jenkins/.gnupg:/.gnupg \
+                -u 501:1001 \
+				-v $GPG_VOLUME:/.gnupg \
                 -v $SONAR_USER_HOME:/.sonar \
                 -v $PWD:/data \
                 -v $M2_VOLUME:/home/maven \
@@ -95,7 +95,7 @@ pipeline {
                 sh('git config commit.gpgsign true')
                 sh('git config user.signingkey $GPG_SIGNKEY')
                 
-                sh "mvn --settings .jenkins/settings.xml -Dmaven.repo.local=${M2_VOLUME}/repository -B -Dresume=false -DargLine='-DprocessAllModules --settings .jenkins/settings.xml -Dmaven.repo.local=/home/maven/.m2 -DskipTestProject=true  -DgpgSignTag=true -DgpgSignCommit=true -DpostReleaseGoals=deploy gitflow:release"
+				sh "mvn --settings .jenkins/settings.xml -Dmaven.repo.local=${M2_VOLUME}/repository -B -Dresume=false -DargLine='-DprocessAllModules --settings .jenkins/settings.xml -Dmaven.repo.local=/home/maven/.m2 --settings .jenkins/settings.xml' -DskipTestProject=true  -DgpgSignTag=true -DgpgSignCommit=true -DpostReleaseGoals=deploy gitflow:release" 
 
                 // remove credentials
                 sh('git remote set-url origin $GIT_URL')
