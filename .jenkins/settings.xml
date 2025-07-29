@@ -7,7 +7,7 @@
 
     <servers>
         <server>
-            <id>ossrh</id>
+            <id>central</id>
             <username>${OSSRH_CREDENTIALS_USR}</username>
             <password>${OSSRH_CREDENTIALS_PSW}</password>
         </server>
@@ -25,7 +25,7 @@
 
     <profiles>
         <profile>
-            <id>ossrh</id>
+            <id>central</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
