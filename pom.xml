@@ -58,7 +58,7 @@
         <springboot.version>3.5.4</springboot.version>
         <spring-cloud.version>4.0.4</spring-cloud.version>
         <spring-ldap.version>3.3.2</spring-ldap.version>
-        <spring-security.version>6.5.1</spring-security.version>
+        <spring-security.version>6.5.2</spring-security.version>
         <springdoc-openapi.version>1.8.0</springdoc-openapi.version>
 
         <!-- tailoring-bom -->
