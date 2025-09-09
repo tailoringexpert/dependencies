@@ -53,7 +53,7 @@
         <mapstruct.version>1.6.3</mapstruct.version>
         <mock-sever-netty-version>5.15.0</mock-sever-netty-version>
         <node.version>16.13.2</node.version>
-        <openhtmltopdf.version>1.1.4</openhtmltopdf.version>
+        <openhtmltopdf.version>1.1.31</openhtmltopdf.version>
         <poi.version>5.4.1</poi.version>
         <springboot.version>3.5.5</springboot.version>
         <spring-cloud.version>4.0.4</spring-cloud.version>
@@ -255,17 +255,17 @@
 
             <!-- openhtmltopdf -->
             <dependency>
-                <groupId>at.datenwort.openhtmltopdf</groupId>
+                <groupId>io.github.openhtmltopdf</groupId>
                 <artifactId>openhtmltopdf-core</artifactId>
                 <version>${openhtmltopdf.version}</version>
             </dependency>
             <dependency>
-                <groupId>at.datenwort.openhtmltopdf</groupId>
+                <groupId>io.github.openhtmltopdf</groupId>
                 <artifactId>openhtmltopdf-pdfbox</artifactId>
                 <version>${openhtmltopdf.version}</version>
             </dependency>
             <dependency>
-                <groupId>at.datenwort.openhtmltopdf</groupId>
+                <groupId>io.github.openhtmltopdf</groupId>
                 <artifactId>openhtmltopdf-java2d</artifactId>
                 <version>${openhtmltopdf.version}</version>
             </dependency>
