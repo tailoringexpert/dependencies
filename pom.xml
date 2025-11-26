@@ -53,7 +53,7 @@
         <mapstruct.version>1.6.3</mapstruct.version>
         <mock-sever-netty-version>5.15.0</mock-sever-netty-version>
         <node.version>16.13.2</node.version>
-        <openhtmltopdf.version>1.1.31</openhtmltopdf.version>
+        <openhtmltopdf.version>1.1.32</openhtmltopdf.version>
         <poi.version>5.4.1</poi.version>
         <springboot.version>3.5.7</springboot.version>
         <spring-cloud.version>4.0.4</spring-cloud.version>
