@@ -39,9 +39,8 @@ pipeline {
         docker {
             image 'tailoringexpert/maven:3.9-eclipse-23'
             args '''
-                -u 501:1001 \
-				-v $GPG_VOLUME:/.gnupg \
-                -v $SONAR_USER_HOME:/.sonar \
+                -u 501:1000 \
+		-v $GPG_VOLUME:/.gnupg \
                 -v $PWD:/data \
                 -v $M2_VOLUME:/home/maven \
                 -e GIT_CREDENTIALS=$GIT_CREDENTIALS \
@@ -78,7 +77,7 @@ pipeline {
 
         stage('install') {
             steps {
-                sh "mvn --settings .jenkins/settings.xml -Dmaven.repo.local=${M2_VOLUME}/repository -DskipTests clean install"
+                sh "mvn --settings .jenkins/settings.xml -Dmaven.repo.local=${M2_VOLUME}/repository -DskipTests clean install -X"
             }
         }
 
