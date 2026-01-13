@@ -45,7 +45,7 @@
         <io-jsonwebtoken.version>0.13.0</io-jsonwebtoken.version>
         <jacoco.version>0.8.8</jacoco.version>
         <jcommander.version>1.82</jcommander.version>
-        <jasypt-spring-boot.version>3.0.5</jasypt-spring-boot.version>
+        <jasypt-spring-boot.version>4.0.3</jasypt-spring-boot.version>
         <jsoup.version>1.22.1</jsoup.version>
         <junit-jupiter.version>6.0.2</junit-jupiter.version>
         <lombok.version>1.18.42</lombok.version>
