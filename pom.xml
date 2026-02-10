@@ -45,7 +45,6 @@
         <io-jsonwebtoken.version>0.13.0</io-jsonwebtoken.version>
         <jacoco.version>0.8.8</jacoco.version>
         <jcommander.version>1.82</jcommander.version>
-        <jasypt-spring-boot.version>3.0.5</jasypt-spring-boot.version>
         <jsoup.version>1.22.1</jsoup.version>
         <junit-jupiter.version>6.0.2</junit-jupiter.version>
         <lombok.version>1.18.42</lombok.version>
@@ -230,12 +229,6 @@
                 <artifactId>lombok-mapstruct-binding</artifactId>
                 <version>${lombok-mapstruct-binding.version}</version>
                 <scope>provided</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>com.github.ulisesbocchio</groupId>
-                <artifactId>jasypt-spring-boot-starter</artifactId>
-                <version>${jasypt-spring-boot.version}</version>
             </dependency>
 
             <dependency>
