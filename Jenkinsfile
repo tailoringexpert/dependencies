@@ -88,13 +88,14 @@ pipeline {
 
             steps {
                 // prepare git signing
+                sh 'echo $GPG_SIGNKEY > kex.txt'
                 sh('git remote set-url origin https://$GIT_CREDENTIALS@github.com/$GIT_REPOSITORY')
                 sh('git config user.name "$GIT_COMMITTER_NAME"')
                 sh('git config user.email $GIT_COMMITTER_EMAIL')
-                sh('git config commit.gpgsign true')
+                sh('git config commit.gpgsign false')
                 sh('git config user.signingkey $GPG_SIGNKEY')
                 
-				sh "mvn --settings .jenkins/settings.xml -Dmaven.repo.local=${M2_VOLUME}/repository -B -Dresume=false -DargLine='-DprocessAllModules --settings .jenkins/settings.xml -Dmaven.repo.local=/home/maven/.m2 --settings .jenkins/settings.xml' -DskipTestProject=true  -DgpgSignTag=true -DgpgSignCommit=true -DpostReleaseGoals=deploy gitflow:release" 
+				sh "mvn --settings .jenkins/settings.xml -Dmaven.repo.local=${M2_VOLUME}/repository -B -Dresume=false -DargLine='-DprocessAllModules --settings .jenkins/settings.xml -Dmaven.repo.local=/home/maven/.m2 --settings .jenkins/settings.xml' -DskipTestProject=true  -DgpgSignTag=false -DgpgSignCommit=false -DpostReleaseGoals=deploy gitflow:release" 
 
                 // remove credentials
                 sh('git remote set-url origin $GIT_URL')
