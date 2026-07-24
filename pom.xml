@@ -275,6 +275,11 @@
                 <version>${openhtmltopdf.version}</version>
             </dependency>
             <dependency>
+                <groupId>io.github.openhtmltopdf</groupId>
+                <artifactId>openhtmltopdf-objects</artifactId>
+                <version>${openhtmltopdf.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.jsoup</groupId>
                 <artifactId>jsoup</artifactId>
                 <version>${jsoup.version}</version>
