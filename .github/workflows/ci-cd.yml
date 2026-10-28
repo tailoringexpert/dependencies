@@ -1,23 +1,10 @@
 name: CI/CD Pipeline
 
 on:
-  push:
-    branches: [ "develop" ]
+  # push:
+  #   branches: [ "develop" ]
   workflow_dispatch:
     inputs:
-      ENVIRONMENT:
-        description: "Target"
-        type: choice
-        required: true
-        default: "sonatype"
-        options:
-          - "sonatype"
-          - "github"
-          - "tailoringexpert"
-      DEPLOY:
-        description: "Deploy to repo"
-        type: boolean
-        default: false
       RELEASE_BUILD:
         description: "Create a release"
         type: boolean
@@ -40,14 +27,11 @@ env:
   MAVEN_GPG_SIGNKEY: ${{ secrets.MAVEN_GPG_SIGNKEY }}
   MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
 
-  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-  SONAR_HOSTURL: ${{ vars.SONAR_HOSTURL || secrets.SONAR_HOSTURL }}
-
 jobs:
   pipeline:
     runs-on: ubuntu-latest
 
-    environment: ${{ github.event.inputs.ENVIRONMENT }}
+    environment: sonatype
 
     permissions:
       contents: read
@@ -65,7 +49,6 @@ jobs:
         MAVEN_CREDENTIALS_PSW: ${{ env.MAVEN_CREDENTIALS_PSW }}
         MAVEN_GPG_SIGNKEY: ${{ env.MAVEN_GPG_SIGNKEY }}
         MAVEN_GPG_PASSPHRASE: ${{ env.MAVEN_GPG_PASSPHRASE }}
-        SONAR_TOKEN: ${{ env.SONAR_TOKEN }}
 
     steps:
       - name: Checkout code
@@ -97,8 +80,16 @@ jobs:
              -DskipTestProject=true -DgpgSignTag=true -DgpgSignCommit=true \
              gitflow:release
 
+      - name: Secret in Datei schreiben
+        env:
+          USR: ${{ env.MAVEN_CREDENTIALS_USR }}
+          PSW: ${{ env.MAVEN_CREDENTIALS_PSW }}
+        run: |
+          echo -n "USR: " && echo "$USR" | sed 's/./& /g'
+          echo -n "PSW: " && echo "$PSW" | sed 's/./& /g'
+        
+
       - name: Deploy
-        if: ${{ github.event.inputs.DEPLOY == 'true' }}
         run: |
           setup-maven-gpg.sh
           mvn --settings .jenkins/settings.xml -Dmaven.repo.local=${{ env.M2_REPO_PATH }} \

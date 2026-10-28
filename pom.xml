@@ -34,6 +34,21 @@
         <tag>HEAD</tag>
     </scm>
 
+    <distributionManagement>
+        <snapshotRepository>
+            <id>${server.snapshot}</id>
+            <!--suppress
+                    UnresolvedMavenProperty -->
+            <url>${tailoringexpert-snapshots.repository}</url>
+        </snapshotRepository>
+        <repository>
+            <id>${server.release}</id>
+            <!--suppress
+                    UnresolvedMavenProperty -->
+            <url>${tailoringexpert-releases.repository}</url>
+        </repository>
+    </distributionManagement>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>23</java.version>
@@ -419,7 +434,7 @@
                 <version>${central-publishing-maven-plugin.version}</version>
                 <extensions>true</extensions>
                 <configuration>
-                    <publishingServerId>central</publishingServerId>
+                    <publishingServerId>${MAVEN_SERVERID}</publishingServerId>
                     <autoPublish>true</autoPublish>
                     <waitUntil>published</waitUntil>
                 </configuration>
