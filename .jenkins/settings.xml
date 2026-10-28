@@ -1,57 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
-          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
-
-    <localRepository>/home/.m2</localRepository>
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
 
     <servers>
         <server>
-            <id>central</id>
-            <username>${OSSRH_CREDENTIALS_USR}</username>
-            <password>${OSSRH_CREDENTIALS_PSW}</password>
+            <id>${MAVEN_SERVERID}</id>
+            <username>${MAVEN_CREDENTIALS_USR}</username>
+            <password>${MAVEN_CREDENTIALS_PSW}</password>
         </server>
         <server>
-            <id>tailoringexpert-releases</id>
-            <username>${NEXUS_CREDENTIALS_USR}</username>
-            <password>${NEXUS_CREDENTIALS_PSW}</password>
-        </server>
-        <server>
-            <id>tailoringexpert-snapshots</id>
-            <username>${NEXUS_CREDENTIALS_USR}</username>
-            <password>${NEXUS_CREDENTIALS_PSW}</password>
+            <id>custom-maven</id>
+            <username>${MAVEN_CUSTOM_CREDENTIALS_USR}</username>
+            <password>${MAVEN_CUSTOM_CREDENTIALS_PSW}</password>
         </server>
     </servers>
 
     <profiles>
         <profile>
-            <id>central</id>
+            <id>default</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <gpg.keyname>${OSSRH_GPG_USR}</gpg.keyname>
-                <gpg.passphrase>${OSSRH_GPG_PSW}</gpg.passphrase>
+                <server.snapshot>${MAVEN_SERVERID}</server.snapshot>
+                <server.release>${MAVEN_SERVERID}</server.release>
+                <tailoringexpert-releases.repository>${MAVEN_RELEASEURL}</tailoringexpert-releases.repository>
+                <tailoringexpert-snapshots.repository>${MAVEN_SNAPSHOTURL}</tailoringexpert-snapshots.repository>
+                <tailoringexpert.repository>${MAVEN_URL}</tailoringexpert.repository>
             </properties>
         </profile>
         <profile>
-            <id>nexus</id>
+            <id>custom-maven</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <activeByDefault>false</activeByDefault>
             </activation>
             <properties>
-                <tailoringexpert-releases.repository>${NEXUS_RELEASEURL}</tailoringexpert-releases.repository>
-                <tailoringexpert-snapshots.repository>${NEXUS_SNAPSHOTURL}</tailoringexpert-snapshots.repository>
-            </properties>
-        </profile>
-        <profile>
-            <id>sonar</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <sonar.host.url>${SONAR_HOSTURL}</sonar.host.url>
-                <sonar.token>${SONAR_TOKEN}</sonar.token>
+                <server.snapshot>custom-maven</server.snapshot>
+                <server.release>custom-maven</server.release>
+                <tailoringexpert-releases.repository>${MAVEN_CUSTOM_RELEASEURL}</tailoringexpert-releases.repository>
+                <tailoringexpert-snapshots.repository>${MAVEN_CUSTOM_SNAPSHOTURL}</tailoringexpert-snapshots.repository>
             </properties>
         </profile>
     </profiles>
