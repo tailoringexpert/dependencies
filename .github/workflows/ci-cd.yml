@@ -1,8 +1,6 @@
 name: CI/CD Pipeline
 
 on:
-  # push:
-  #   branches: [ "develop" ]
   workflow_dispatch:
     inputs:
       RELEASE_BUILD:
@@ -20,10 +18,8 @@ env:
   GIT_GPG_SIGNKEY: ${{ secrets.GIT_GPG_SIGNKEY }}
 
   M2_REPO_PATH: ${{ github.workspace }}/.m2/repository
-  MAVEN_SNAPSHOTURL: ${{ vars.MAVEN_SNAPSHOTURL || secrets.MAVEN_SNAPSHOTURL}}
-  MAVEN_RELEASEURL: ${{ vars.MAVEN_RELEASEURL || secrets.MAVEN_RELEASEURL }}
-  MAVEN_CREDENTIALS_USR: ${{ secrets.MAVEN_CREDENTIALS_USR || github.actor}}
-  MAVEN_CREDENTIALS_PSW: ${{ secrets.MAVEN_CREDENTIALS_PSW || secrets.GITHUB_TOKEN }}
+  MAVEN_CREDENTIALS_USR: ${{ secrets.MAVEN_CREDENTIALS_USR }}
+  MAVEN_CREDENTIALS_PSW: ${{ secrets.MAVEN_CREDENTIALS_PSW }}
   MAVEN_GPG_SIGNKEY: ${{ secrets.MAVEN_GPG_SIGNKEY }}
   MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
 
@@ -31,20 +27,17 @@ jobs:
   pipeline:
     runs-on: ubuntu-latest
 
-    environment: sonatype
+    environment: central
 
     permissions:
       contents: read
       packages: write
 
     container:
-      image: ghcr.io/tailoringexpert/maven:3.9-eclipse-25
+      image: ${{ vars.CONTAINER_IMAGE }}
       env:
         GIT_COMMITTER_NAME: ${{ env.GIT_COMMITTER_NAME }}
         GIT_COMMITTER_EMAIL: ${{ env.GIT_COMMITTER_EMAIL }}
-        MAVEN_SERVERID: ${{ github.event.inputs.ENVIRONMENT }}
-        MAVEN_SNAPSHOTURL: ${{ env.MAVEN_SNAPSHOTURL }}
-        MAVEN_RELEASEURL: ${{ env.MAVEN_RELEASEURL }}
         MAVEN_CREDENTIALS_USR: ${{ env.MAVEN_CREDENTIALS_USR }}
         MAVEN_CREDENTIALS_PSW: ${{ env.MAVEN_CREDENTIALS_PSW }}
         MAVEN_GPG_SIGNKEY: ${{ env.MAVEN_GPG_SIGNKEY }}
@@ -68,31 +61,26 @@ jobs:
 
       - name: Install
         run: |
-          mvn --settings .jenkins/settings.xml -Dmaven.repo.local=${{ env.M2_REPO_PATH }} -DskipTests \
-              install
+          mvn --settings .github/settings.xml \
+              -Dmaven.repo.local=${{ env.M2_REPO_PATH }} \
+              -DskipTests \
+            install
 
       - name: Release
         if: ${{ github.event.inputs.RELEASE_BUILD == 'true' }}
         run: |
           setup-git.sh
-          mvn --settings .jenkins/settings.xml -Dmaven.repo.local=${{ env.M2_REPO_PATH }} -B -Dresume=false -DpushChanges=false \
-             -DargLine='-DprocessAllModules --settings .jenkins/settings.xml -Dmaven.repo.local=/home/maven/.m2' \
-             -DskipTestProject=true -DgpgSignTag=true -DgpgSignCommit=true \
-             gitflow:release
-
-      - name: Secret in Datei schreiben
-        env:
-          USR: ${{ env.MAVEN_CREDENTIALS_USR }}
-          PSW: ${{ env.MAVEN_CREDENTIALS_PSW }}
-        run: |
-          echo -n "USR: " && echo "$USR" | sed 's/./& /g'
-          echo -n "PSW: " && echo "$PSW" | sed 's/./& /g'
-        
+          mvn --settings .github/settings.xml \
+              -Dmaven.repo.local=${{ env.M2_REPO_PATH }} -B -Dresume=false -DpushChanges=false \
+              -DargLine='-DprocessAllModules --settings .github/settings.xml -Dmaven.repo.local=/home/maven/.m2' \
+              -DskipTestProject=true -DgpgSignTag=true -DgpgSignCommit=true \
+            gitflow:release
 
       - name: Deploy
         run: |
           setup-maven-gpg.sh
-          mvn --settings .jenkins/settings.xml -Dmaven.repo.local=${{ env.M2_REPO_PATH }} \
+          mvn --settings .github/settings.xml \
+              -Dmaven.repo.local=${{ env.M2_REPO_PATH }} \
               -DskipTests \
               -Dgpg.arguments="--pinentry-mode loopback" \
-              deploy
+            deploy

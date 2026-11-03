@@ -5,31 +5,13 @@
 
     <servers>
         <server>
-            <id>${MAVEN_SERVERID}</id>
+            <id>central</id>
             <username>${MAVEN_CREDENTIALS_USR}</username>
             <password>${MAVEN_CREDENTIALS_PSW}</password>
-        </server>
-        <server>
-            <id>custom-maven</id>
-            <username>${MAVEN_CUSTOM_CREDENTIALS_USR}</username>
-            <password>${MAVEN_CUSTOM_CREDENTIALS_PSW}</password>
         </server>
     </servers>
 
     <profiles>
-        <profile>
-            <id>default</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <server.snapshot>${MAVEN_SERVERID}</server.snapshot>
-                <server.release>${MAVEN_SERVERID}</server.release>
-                <tailoringexpert-releases.repository>${MAVEN_RELEASEURL}</tailoringexpert-releases.repository>
-                <tailoringexpert-snapshots.repository>${MAVEN_SNAPSHOTURL}</tailoringexpert-snapshots.repository>
-                <tailoringexpert.repository>${MAVEN_URL}</tailoringexpert.repository>
-            </properties>
-        </profile>
         <profile>
             <id>custom-maven</id>
             <activation>

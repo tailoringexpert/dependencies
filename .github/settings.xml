@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+
+    <servers>
+        <server>
+            <id>central</id>
+            <username>${MAVEN_CREDENTIALS_USR}</username>
+            <password>${MAVEN_CREDENTIALS_PSW}</password>
+        </server>
+    </servers>
+
+    <profiles>
+        <profile>
+            <id>custom-maven</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <server.snapshot>custom-maven</server.snapshot>
+                <server.release>custom-maven</server.release>
+                <tailoringexpert-releases.repository>${MAVEN_CUSTOM_RELEASEURL}</tailoringexpert-releases.repository>
+                <tailoringexpert-snapshots.repository>${MAVEN_CUSTOM_SNAPSHOTURL}</tailoringexpert-snapshots.repository>
+            </properties>
+        </profile>
+    </profiles>
+
+</settings>
