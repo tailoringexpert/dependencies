@@ -9,20 +9,37 @@
             <username>${MAVEN_CREDENTIALS_USR}</username>
             <password>${MAVEN_CREDENTIALS_PSW}</password>
         </server>
+        <server>
+            <id>central-snapshots</id>
+            <username>${MAVEN_CREDENTIALS_USR}</username>
+            <password>${MAVEN_CREDENTIALS_PSW}</password>
+        </server>
     </servers>
 
     <profiles>
         <profile>
-            <id>custom-maven</id>
+            <id>central</id>
             <activation>
-                <activeByDefault>false</activeByDefault>
+                <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <server.snapshot>custom-maven</server.snapshot>
-                <server.release>custom-maven</server.release>
-                <tailoringexpert-releases.repository>${MAVEN_CUSTOM_RELEASEURL}</tailoringexpert-releases.repository>
-                <tailoringexpert-snapshots.repository>${MAVEN_CUSTOM_SNAPSHOTURL}</tailoringexpert-snapshots.repository>
+                <sonar.host.url>${SONAR_HOSTURL}</sonar.host.url>
+                <sonar.token>${SONAR_TOKEN}</sonar.token>
             </properties>
+            <repositories>
+                <repository>
+                    <id>central-snapshots</id>
+                    <name>Central Portal Snapshots</name>
+                    <url>https://central.sonatype.com/repository/maven-snapshots/</url>
+                    <releases>
+                        <enabled>false</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>true</enabled>
+                        <updatePolicy>always</updatePolicy>
+                    </snapshots>
+                </repository>
+            </repositories>
         </profile>
     </profiles>
 
