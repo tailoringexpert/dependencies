@@ -15,32 +15,4 @@
             <password>${MAVEN_CREDENTIALS_PSW}</password>
         </server>
     </servers>
-
-    <profiles>
-        <profile>
-            <id>central</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <sonar.host.url>${SONAR_HOSTURL}</sonar.host.url>
-                <sonar.token>${SONAR_TOKEN}</sonar.token>
-            </properties>
-            <repositories>
-                <repository>
-                    <id>central-snapshots</id>
-                    <name>Central Portal Snapshots</name>
-                    <url>https://central.sonatype.com/repository/maven-snapshots/</url>
-                    <releases>
-                        <enabled>false</enabled>
-                    </releases>
-                    <snapshots>
-                        <enabled>true</enabled>
-                        <updatePolicy>always</updatePolicy>
-                    </snapshots>
-                </repository>
-            </repositories>
-        </profile>
-    </profiles>
-
 </settings>
