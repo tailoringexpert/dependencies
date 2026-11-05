@@ -27,8 +27,6 @@ jobs:
   pipeline:
     runs-on: ubuntu-latest
 
-    environment: central
-
     permissions:
       contents: read
       packages: write
