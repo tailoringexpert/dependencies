@@ -9,9 +9,24 @@
             <username>${MAVEN_CREDENTIALS_USR}</username>
             <password>${MAVEN_CREDENTIALS_PSW}</password>
         </server>
+        <server>
+            <id>central-snapshots</id>
+            <username>${MAVEN_CREDENTIALS_USR}</username>
+            <password>${MAVEN_CREDENTIALS_PSW}</password>
+        </server>
     </servers>
 
     <profiles>
+        <profile>
+            <id>gpg-signing</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <gpg.arguments>--pinentry-mode=loopback</gpg.arguments>
+            </properties>
+        </profile>
+    
         <profile>
             <id>custom-maven</id>
             <activation>

@@ -15,12 +15,13 @@ concurrency:
 env:
   GIT_COMMITTER_NAME: ${{ vars.GIT_COMMITTER_NAME }}
   GIT_COMMITTER_EMAIL: ${{ secrets.GIT_COMMITTER_EMAIL }}
-  GIT_GPG_SIGNKEY: ${{ secrets.GIT_GPG_SIGNKEY }}
+  GIT_GPG_SIGNKEY_BASE64: ${{ secrets.GIT_GPG_SIGNKEY_BASE64 }}
 
-  M2_REPO_PATH: ${{ github.workspace }}/.m2/repository
+  MAVEN_SETTINGS: './settings.xml'
+  MAVEN_REPOSITORY: '/home/maven'
   MAVEN_CREDENTIALS_USR: ${{ secrets.MAVEN_CREDENTIALS_USR }}
   MAVEN_CREDENTIALS_PSW: ${{ secrets.MAVEN_CREDENTIALS_PSW }}
-  MAVEN_GPG_SIGNKEY: ${{ secrets.MAVEN_GPG_SIGNKEY }}
+  MAVEN_GPG_SIGNKEY_BASE64: ${{ secrets.MAVEN_GPG_SIGNKEY_BASE64 }}
   MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
 
 jobs:
@@ -34,11 +35,12 @@ jobs:
     container:
       image: ${{ vars.CONTAINER_IMAGE }}
       env:
+        GIT_WORKSPACE: ${{ github.workspace }}
         GIT_COMMITTER_NAME: ${{ env.GIT_COMMITTER_NAME }}
         GIT_COMMITTER_EMAIL: ${{ env.GIT_COMMITTER_EMAIL }}
         MAVEN_CREDENTIALS_USR: ${{ env.MAVEN_CREDENTIALS_USR }}
         MAVEN_CREDENTIALS_PSW: ${{ env.MAVEN_CREDENTIALS_PSW }}
-        MAVEN_GPG_SIGNKEY: ${{ env.MAVEN_GPG_SIGNKEY }}
+        MAVEN_GPG_SIGNKEY_BASE64:  ${{ env.MAVEN_GPG_SIGNKEY_BASE64 }}
         MAVEN_GPG_PASSPHRASE: ${{ env.MAVEN_GPG_PASSPHRASE }}
 
     steps:
@@ -49,18 +51,25 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
 
+      - name: Setup runtime env vars
+        run: |
+          echo "GIT_WORKSPACE=$(pwd)" >> $GITHUB_ENV
+          echo "MAVEN_SETTINGS=$(pwd)/settings.xml" >> $GITHUB_ENV
+          
+          git config --global --add safe.directory $(pwd)
+
       - name: Cache maven packages
         uses: actions/cache@v6
         with:
-          path: ${{ env.M2_REPO_PATH }}
+          path: $MAVEN_REPOSITORY 
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
 
       - name: Install
         run: |
-          mvn --settings .github/settings.xml \
-              -Dmaven.repo.local=${{ env.M2_REPO_PATH }} \
+          mvn --settings $MAVEN_SETTINGS \
+              -Dmaven.repo.local=$MAVEN_REPOSITORY  \
               -DskipTests \
             install
 
@@ -68,17 +77,23 @@ jobs:
         if: ${{ github.event.inputs.RELEASE_BUILD == 'true' }}
         run: |
           setup-git.sh
-          mvn --settings .github/settings.xml \
-              -Dmaven.repo.local=${{ env.M2_REPO_PATH }} -B -Dresume=false -DpushChanges=false \
-              -DargLine='-DprocessAllModules --settings .github/settings.xml -Dmaven.repo.local=/home/maven/.m2' \
-              -DskipTestProject=true -DgpgSignTag=true -DgpgSignCommit=true \
+          mvn --settings $MAVEN_SETTINGS -B \
+              -Dmaven.repo.local=$MAVEN_REPOSITORY \
+              -Dresume=false \
+              -DpushChanges=false \
+              -DargLine='-DprocessAllModules --settings $MAVEN_SETTINGS -Dmaven.repo.local=$MAVEN_REPOSITORY' \
+              -DskipTestProject=true \
+              -DgpgSignTag=true \
+              -DgpgSignCommit=true \
             gitflow:release
 
       - name: Deploy
         run: |
           setup-maven-gpg.sh
-          mvn --settings .github/settings.xml \
-              -Dmaven.repo.local=${{ env.M2_REPO_PATH }} \
+          mvn --settings $MAVEN_SETTINGS \
+              -Dmaven.repo.local=$MAVEN_REPOSITORY \
               -DskipTests \
               -Dgpg.arguments="--pinentry-mode loopback" \
+              -Dgpg.keyname="${{ env.MAVEN_GPG_KEY_ID }}" \
+              -Dgpg.passphrase="${{ env.MAVEN_GPG_PASSPHRASE }}" \
             deploy

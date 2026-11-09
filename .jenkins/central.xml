@@ -1,0 +1,55 @@
+<settings>
+    <servers>
+
+        <server>
+            <id>central</id>
+            <username>fCQg8O</username>
+            <password>Kgb8MKEmOuKz7aGWLz7M3ux0VnfAqnTaT</password>
+        </server>
+
+    </servers>
+
+    <profiles>
+        <profile>
+            <id>sonar</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <sonar.token>squ_b885d896c5115656fb548ea162ec34328056ddad</sonar.token>
+                <sonar.host.url>https://sonar.michael-baedorf.de</sonar.host.url>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>default</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <MAVEN_SERVERID>central</MAVEN_SERVERID>
+                <tailoringexpert-releases.repository>https://central.sonatype.com/</tailoringexpert-releases.repository>
+                <tailoringexpert-snapshots.repository>
+                    https://central.sonatype.com/repository/maven-snapshots/</tailoringexpert-snapshots.repository>
+                <server.snapshot>central</server.snapshot>
+                <server.release>central</server.release>
+                <MAVEN_CREDENTIALS_USR>fCQg8O</MAVEN_CREDENTIALS_USR>
+                <MAVEN_CREDENTIALS_PSW>Kgb8MKEmOuKz7aGWLz7M3ux0VnfAqnTaT</MAVEN_CREDENTIALS_PSW>
+
+                <MAVEN_GPG_SIGNKEY>000D002951BCCED4</MAVEN_GPG_SIGNKEY>
+                <MAVEN_GPG_PASSPHRASE>Mauel1883!</MAVEN_GPG_PASSPHRASE>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>sources</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <downloadSources>true</downloadSources>
+                <downloadJavadocs>true</downloadJavadocs>
+            </properties>
+        </profile>
+    </profiles>
+</settings>
