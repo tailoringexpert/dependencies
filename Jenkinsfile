@@ -1,57 +1,14 @@
-properties([
-    parameters([
-        booleanParam(
-            name: 'RELEASE_BUILD',
-            defaultValue: false),
-        booleanParam(
-            name: 'DEPLOY',
-            defaultValue: false),
-        gitParameter(
-            name: 'BRANCH',
-            branch: '',
-            defaultValue: 'develop',
-            branchFilter: 'origin/(.*)',
-            selectedValue: 'NONE',
-            sortMode: 'NONE',
-            type: 'PT_BRANCH')
-    ])
-])
-
 pipeline {
-
-    environment {
-        GIT_CREDENTIALS_ID = 'TAILORINGEXPERT_GITHUB_CREDENTIALS'
-        GIT_CREDENTIALS = credentials('TAILORINGEXPERT_GITHUB_CREDENTIALS')
-        GPG_SIGNKEY = credentials('GITHUB_GPG_SIGNKEY')
-        OSSRH_CREDENTIALS = credentials('OSSRH_CREDENTIALS')
-        OSSRH_GPG = credentials('OSSRH_GPG')
-        GIT_REPOSITORY = 'tailoringexpert/dependencies.git' 
-         
-        // other (external) defined env vars
-        // M2_VOLUME maven      repoository volume
-        // GPG_VOLUME           gpg key volume
-        // GIT_COMMITTER_NAME   name of the git committer
-        // GIT_COMMITTER_EMAIL  mail of the git committer
-
-    }
-
- agent {
+    agent {
         docker {
-            image 'tailoringexpert/maven:3.9-eclipse-23'
+            image "${env.MAVEN_IMAGE}"
             args '''
+                --entrypoint='' \
                 -u 501:1000 \
-		-v $GPG_VOLUME:/.gnupg \
-                -v $PWD:/data \
                 -v $M2_VOLUME:/home/maven \
-                -e GIT_CREDENTIALS=$GIT_CREDENTIALS \
+                -v $PWD:/data \
                 -e GIT_COMMITTER_NAME=$GIT_COMMITTER_NAME \
-                -e GIT_COMMITTER_EMAIL=$GIT_COMMITTER_EMAIL \
-                -e NEXUS_SNAPSHOTURL=$NEXUS_SNAPSHOTURL \
-                -e NEXUS_RELEASEURL=$NEXUS_RELEASEURL \
-                -e NEXUS_CREDENTIALS_USR=$NEXUS_CREDENTIALS_USR \
-                -e NEXUS_CREDENTIALS_PSW=$NEXUS_CREDENTIALS_PSW \
-                -e GPG_SIGNKEY=$GPG_SIGNKEY \
-                -e SONAR_TOKEN=$SONAR_TOKEN \
+                -e GIT_COMMITTER_EMAIL=$GIT_COMMITTER_EMAIL 
             '''
             reuseNode true
        }
@@ -59,25 +16,71 @@ pipeline {
 
     options {
         buildDiscarder(logRotator(daysToKeepStr: '3', numToKeepStr: '3'))
+        disableConcurrentBuilds()
+    }
+
+    parameters {
+        booleanParam(
+            name: 'RELEASE_BUILD',
+            defaultValue: false,
+            description: 'Create a release')
+        booleanParam(
+            name: 'DEPLOY',
+            defaultValue: false,
+            description: 'Execute deployment step')
+        gitParameter(
+            name: 'BRANCH',
+            branch: '',
+            defaultValue: 'develop',
+            branchFilter: 'origin/(.*)',
+            selectedValue: 'NONE',
+            sortMode: 'NONE',
+            type: 'PT_BRANCH',
+            description: 'Select target branch')
+    }
+
+    environment {
+        GIT_REPOSITORY = 'tailoringexpert/dependencies.git'         
+        GIT_CREDENTIALS_ID = 'TAILORINGEXPERT_GITHUB_CREDENTIALS'
+        GIT_CREDENTIALS = credentials('TAILORINGEXPERT_GITHUB_CREDENTIALS')
+        GIT_GPG_SIGNKEY_BASE64 = credentials('GIT_GITHUB_GPG_SIGNKEY_BASE64')
+        GIT_GPG_PASSPHRASE = credentials('GIT_GITHUB_GPG_PASSPHRASE')
+        MAVEN_CREDENTIALS = credentials('MAVEN_SONATYPE_CREDENTIALS')
+        MAVEN_GPG_SIGNKEY_BASE64 = credentials('MAVEN_SONATYPE_GPG_SIGNKEY_BASE64')
+        MAVEN_GPG_PASSPHRASE = credentials('MAVEN_SONATYPE_GPG_PASSPHRASE')
+
+        GIT_WORKSPACE = '/data'
+        MAVEN_SETTINGS = "./settings.xml"
+        MAVEN_REPOSITORY = "/home/maven"
+
+        MAVEN_CREDENTIALS_USR = "${env.MAVEN_CREDENTIALS_USR}"
+        MAVEN_CREDENTIALS_PSW = "${env.MAVEN_CREDENTIALS_PSW}"
     }
 
     stages {
         stage('checkout') {
              steps {
                 script {
+                    deploymentExtension = params.DEPLOY ? " (deploy)" : ""
                     checkoutBranch = params.RELEASE_BUILD ? 'develop' : params.BRANCH
-                    currentBuild.displayName = "#${env.BUILD_ID} | " + (params.RELEASE_BUILD ?  "RELEASE " : ("${checkoutBranch}" + (params.DEPLOY ? " (deploy)" : "")))
+                    currentBuild.displayName = "#${env.BUILD_ID} | " + (params.RELEASE_BUILD ? "RELEASE " : "${checkoutBranch}${deploymentExtension}")
                 }
+                
                 sh "echo checking out ${checkoutBranch}"             
-             
                 cleanWs()
-                git branch: "${checkoutBranch}", url: env.GIT_URL, credentialsId: GIT_CREDENTIALS_ID
+                
+                git branch: "${checkoutBranch}", url: env.GIT_URL, credentialsId: "${env.GIT_CREDENTIALS_ID}"
              }
         }
 
         stage('install') {
             steps {
-                sh "mvn --settings .jenkins/settings.xml -Dmaven.repo.local=${M2_VOLUME}/repository -DskipTests clean install -X"
+                sh '''
+                    mvn --settings $MAVEN_SETTINGS  \
+                        -Dmaven.repo.local=$MAVEN_REPOSITORY \
+                        -DskipTests \
+                    clean install
+                '''                    
             }
         }
 
@@ -85,39 +88,37 @@ pipeline {
             when {
                 expression { params.RELEASE_BUILD }
             }
-
             steps {
-                // prepare git signing
-                sh 'echo $GPG_SIGNKEY > kex.txt'
-                sh('git remote set-url origin https://$GIT_CREDENTIALS@github.com/$GIT_REPOSITORY')
-                sh('git config user.name "$GIT_COMMITTER_NAME"')
-                sh('git config user.email $GIT_COMMITTER_EMAIL')
-                sh('git config commit.gpgsign false')
-                sh('git config user.signingkey $GPG_SIGNKEY')
-                
-				sh "mvn --settings .jenkins/settings.xml -Dmaven.repo.local=${M2_VOLUME}/repository -B -Dresume=false -DargLine='-DprocessAllModules --settings .jenkins/settings.xml -Dmaven.repo.local=/home/maven/.m2 --settings .jenkins/settings.xml' -DskipTestProject=true  -DgpgSignTag=false -DgpgSignCommit=false -DpostReleaseGoals=deploy gitflow:release" 
-
-                // remove credentials
-                sh('git remote set-url origin $GIT_URL')
+                sh '''
+                    . setup-git.sh
+				    mvn --settings $MAVEN_SETTINGS -B \
+                        -Dmaven.repo.local=$MAVEN_REPOSITORY \
+                        -Dresume=false \
+                        -DargLine='-DprocessAllModules --settings $MAVEN_SETTINGS -Dmaven.repo.local=$MAVEN_REPOSITORY' 
+                        -DskipTestProject=true \
+                        -DgpgSignTag=true \
+                        -DgpgSignCommit=true \
+                    gitflow:release
+                '''
             }
         }
 
         stage('deploy') {   
             when {
                 anyOf {
-                    expression { params.RELEASE_BUILD };
+                    expression { params.RELEASE_BUILD }
                     expression { params.DEPLOY }
                 }
             }
-                    
             steps {
                 script {
-                    if (params.DEPLOY) {
-						//sh "mvn --settings .jenkins/settings.xml -Dmaven.repo.local=${M2_VOLUME}/repository -DskipTests exec:exec@ll"
-						sh "mvn --settings .jenkins/settings.xml -Dmaven.repo.local=${M2_VOLUME}/repository -DskipTests deploy"
-                    } else {
-                        sh "exit 0"
-                    }
+                        sh '''
+                            . setup-maven-gpg.sh
+						    mvn --settings $MAVEN_SETTINGS \
+                                -Dmaven.repo.local=$MAVEN_REPOSITORY \
+                                -DskipTests \
+                                deploy
+                        '''
                 }
             }
         }
