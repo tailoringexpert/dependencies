@@ -17,7 +17,6 @@ env:
   GIT_COMMITTER_EMAIL: ${{ secrets.GIT_COMMITTER_EMAIL }}
   GIT_GPG_SIGNKEY_BASE64: ${{ secrets.GIT_GPG_SIGNKEY_BASE64 }}
 
-  MAVEN_SETTINGS: './settings.xml'
   MAVEN_REPOSITORY: '/home/maven'
   MAVEN_CREDENTIALS_USR: ${{ secrets.MAVEN_CREDENTIALS_USR }}
   MAVEN_CREDENTIALS_PSW: ${{ secrets.MAVEN_CREDENTIALS_PSW }}
@@ -55,8 +54,6 @@ jobs:
         run: |
           echo "GIT_WORKSPACE=$(pwd)" >> $GITHUB_ENV
           echo "MAVEN_SETTINGS=$(pwd)/settings.xml" >> $GITHUB_ENV
-          
-          git config --global --add safe.directory $(pwd)
 
       - name: Cache maven packages
         uses: actions/cache@v6
@@ -93,7 +90,4 @@ jobs:
           mvn --settings $MAVEN_SETTINGS \
               -Dmaven.repo.local=$MAVEN_REPOSITORY \
               -DskipTests \
-              -Dgpg.arguments="--pinentry-mode loopback" \
-              -Dgpg.keyname="${{ env.MAVEN_GPG_KEY_ID }}" \
-              -Dgpg.passphrase="${{ env.MAVEN_GPG_PASSPHRASE }}" \
-            deploy
+              deploy
